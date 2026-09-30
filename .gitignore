@@ -1,23 +1,49 @@
+# ==============================
 # Python virtual environment
+# ==============================
 venv/
 .venv/
 
-# Python cache
+# ==============================
+# Python cache files
+# ==============================
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 
-# Dataset files - keep them local
-dataset/
+# ==============================
+# Dataset
+# Keep dataset files local
+# ==============================
+dataset/*
+!dataset/train/
+!dataset/test/
+!dataset/train/.gitkeep
+!dataset/test/.gitkeep
 
+# Ignore all TSV dataset files
+dataset/train/*.tsv
+dataset/test/*.tsv
+
+# ==============================
 # Generated output files
+# ==============================
 output/
 
-# VS Code settings
+# ==============================
+# VS Code
+# ==============================
 .vscode/
 
-# Jupyter Notebook checkpoints
+# ==============================
+# Jupyter Notebook
+# ==============================
 .ipynb_checkpoints/
 
+# ==============================
 # OS files
+# ==============================
 .DS_Store
 Thumbs.db
+desktop.ini
