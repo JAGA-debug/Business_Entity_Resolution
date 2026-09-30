@@ -3,6 +3,7 @@ import unicodedata
 
 
 def normalize_text(value):
+
     if value is None:
         return ""
 
@@ -14,13 +15,27 @@ def normalize_text(value):
     # Lowercase
     value = value.lower()
 
-    # Remove punctuation while preserving Unicode letters and numbers
-    value = "".join(
-        char if char.isalnum() or char.isspace() else " "
-        for char in value
-    )
+    # Keep letters, numbers, combining marks and spaces.
+    # This is important for Indian scripts.
+    cleaned = []
 
-    # Normalize spaces
+    for char in value:
+
+        category = unicodedata.category(char)
+
+        if (
+            char.isspace()
+            or category.startswith("L")
+            or category.startswith("N")
+            or category.startswith("M")
+        ):
+            cleaned.append(char)
+        else:
+            cleaned.append(" ")
+
+    value = "".join(cleaned)
+
+    # Normalize whitespace
     value = re.sub(r"\s+", " ", value).strip()
 
     return value
