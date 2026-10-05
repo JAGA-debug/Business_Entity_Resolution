@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#163b32">
+  <title>Entity Resolution | Results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --forest: #163b32;
+      --forest-2: #265849;
+      --ink: #1c3029;
+      --muted: #66746d;
+      --paper: #f1f4ee;
+      --white: #fff;
+      --line: #dce3db;
+      --lime: #c3e577;
+      --coral: #e47760;
+      --sky: #79b6c5;
+      --gold: #edc46a;
+      --sans: "DM Sans", "Segoe UI", sans-serif;
+      --serif: "Fraunces", Georgia, serif;
+      --mono: "DM Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--sans); }
+    button, input { font: inherit; }
+    a { color: inherit; }
+    .shell { width: min(1160px, calc(100% - 56px)); margin: 0 auto; }
+    .topbar { height: 70px; background: var(--white); border-bottom: 1px solid var(--line); }
+    .topbar-inner { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 11px; color: var(--forest); font: 600 13px var(--sans); text-decoration: none; }
+    .brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 3px; background: var(--lime); font: 500 12px var(--mono); }
+    .nav { display: flex; align-items: center; gap: 26px; color: var(--muted); font: 11px var(--mono); }
+    .nav a { text-decoration: none; }
+    .nav a:hover { color: var(--forest); }
+    .top-status { display: inline-flex; align-items: center; gap: 8px; color: var(--forest-2); }
+    .top-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #80ae47; }
+
+    .masthead { padding: 43px 0 30px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; margin: 0 0 11px; color: #5c7567; font: 10px var(--mono); text-transform: uppercase; }
+    .eyebrow::before { content: ""; width: 19px; height: 1px; background: var(--coral); }
+    .heading-row { display: flex; align-items: end; justify-content: space-between; gap: 28px; }
+    h1 { margin: 0; color: var(--forest); font: 500 48px/1.03 var(--serif); }
+    .masthead-copy { max-width: 430px; margin: 0 0 3px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 4px; background: var(--white); }
+    .metric { min-height: 112px; display: flex; flex-direction: column; justify-content: center; padding: 19px 23px; border-right: 1px solid var(--line); }
+    .metric:last-child { border-right: 0; }
+    .metric-value { color: var(--forest); font: 500 29px/1.1 var(--serif); }
+    .metric-label { margin-top: 8px; color: var(--muted); font: 9px var(--mono); text-transform: uppercase; }
+    .metric-detail { margin-top: 4px; color: #89958e; font-size: 10px; }
+
+    .dashboard { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .85fr); gap: 18px; padding: 22px 0 58px; }
+    .panel { min-width: 0; border: 1px solid var(--line); border-radius: 4px; background: var(--white); }
+    .panel-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 20px 22px 16px; border-bottom: 1px solid var(--line); }
+    .panel-kicker { margin: 0 0 6px; color: #718078; font: 9px var(--mono); text-transform: uppercase; }
+    h2 { margin: 0; color: var(--forest); font: 500 23px/1.15 var(--serif); }
+    .panel-caption { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .dataset-pill { flex: 0 0 auto; padding: 6px 8px; border: 1px solid var(--line); border-radius: 2px; color: #61736a; font: 9px var(--mono); }
+    .lookup-form { padding: 18px 22px 15px; }
+    .field-label { display: block; margin: 0 0 7px; color: #51645a; font: 9px var(--mono); text-transform: uppercase; }
+    .file-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 9px; align-items: center; }
+    input[type="file"] { width: 100%; min-width: 0; padding: 9px; border: 1px solid var(--line); border-radius: 3px; background: #fbfcfa; color: var(--muted); font-size: 10px; }
+    .search-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 9px; margin-top: 15px; }
+    input[type="text"] { width: 100%; min-width: 0; height: 40px; padding: 0 12px; border: 1px solid #cfd9d0; border-radius: 3px; outline: none; background: #fff; color: var(--ink); font: 12px var(--mono); }
+    input[type="text"]:focus, input[type="file"]:focus-visible { border-color: var(--forest-2); box-shadow: 0 0 0 3px rgba(38,88,73,.1); }
+    .button { min-height: 40px; padding: 0 15px; border: 0; border-radius: 3px; background: var(--forest); color: white; cursor: pointer; font: 10px var(--mono); }
+    .button:hover { background: var(--forest-2); }
+    .button:disabled { cursor: wait; opacity: .65; }
+    .status { min-height: 18px; margin: 9px 0 0; color: var(--muted); font-size: 10px; }
+    .status[data-kind="error"] { color: #a33e31; }
+    .status[data-kind="success"] { color: #376345; }
+    .privacy-note { margin: 0; padding: 0 22px 17px; color: #849087; font-size: 10px; }
+
+    .result-view { margin: 0 22px 21px; border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+    .result-view-head { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 14px; background: #f5f7f2; border-bottom: 1px solid var(--line); }
+    .result-id { color: var(--forest); font: 500 11px var(--mono); }
+    .result-country { padding: 4px 7px; border-radius: 2px; background: #e8f0de; color: #48613d; font: 9px var(--mono); }
+    .entity-line { display: grid; grid-template-columns: 82px minmax(0,1fr) auto; align-items: start; gap: 12px; padding: 13px 14px; border-bottom: 1px solid #edf0ec; }
+    .entity-line:last-child { border-bottom: 0; }
+    .entity-source { padding-top: 2px; color: #748178; font: 9px var(--mono); }
+    .entity-main { min-width: 0; }
+    .entity-name { color: var(--ink); font-size: 12px; font-weight: 600; overflow-wrap: anywhere; }
+    .entity-address { margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.4; overflow-wrap: anywhere; }
+    .match-mark { color: #537539; font: 9px var(--mono); }
+    .id-only { grid-column: 2 / 4; color: var(--forest-2); font: 10px var(--mono); overflow-wrap: anywhere; }
+    .more-results { padding: 10px 14px; border-top: 1px solid var(--line); background: #fbfcfa; color: var(--muted); font: 9px var(--mono); }
+
+    .side-panel { padding: 20px; }
+    .side-panel + .side-panel { margin-top: 18px; }
+    .side-panel h2 { font-size: 21px; }
+    .chart-note { margin: 7px 0 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .chart-legend { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 16px; color: var(--muted); font: 9px var(--mono); }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .legend-swatch { width: 9px; height: 9px; display: inline-block; background: var(--forest-2); }
+    .legend-swatch.empty { background: #e4e9e2; border: 1px solid #d3dbd1; }
+    .coverage-chart { margin-top: 14px; }
+    .chart-axis { display: flex; justify-content: space-between; margin: 0 0 5px 85px; color: #929c95; font: 8px var(--mono); }
+    .coverage-row { padding: 11px 0 10px; border-top: 1px solid #edf0ec; }
+    .coverage-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 7px; }
+    .coverage-country { color: #42564c; font-size: 11px; font-weight: 600; }
+    .coverage-percent { color: var(--forest); font: 500 13px var(--mono); }
+    .coverage-plot { height: 9px; overflow: hidden; background-color: #e7ebe5; background-image: linear-gradient(to right, transparent calc(50% - .5px), #f7f8f5 calc(50% - .5px), #f7f8f5 calc(50% + .5px), transparent calc(50% + .5px)); }
+    .coverage-fill { height: 100%; transform-origin: left; animation: grow .8s ease-out both; }
+    .coverage-fill.france { width: 71.2%; background: var(--sky); }
+    .coverage-fill.india { width: 78.3%; background: #82a94a; }
+    .coverage-fill.us { width: 86.4%; background: var(--coral); }
+    .coverage-count { margin-top: 5px; color: #7d8981; font: 8px var(--mono); }
+    .workflow { margin-top: 15px; }
+    .workflow-step { display: grid; grid-template-columns: 26px 1fr; gap: 10px; padding: 13px 0; border-top: 1px solid #edf0ec; }
+    .step-no { color: #728276; font: 9px var(--mono); }
+    .step-title { color: var(--forest); font-size: 11px; font-weight: 700; }
+    .step-copy { margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+    .downloads { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 15px; }
+    .download-link { padding: 9px 10px; border: 1px solid #cfd9d0; border-radius: 3px; color: var(--forest); font: 9px var(--mono); text-decoration: none; }
+    .download-link:hover { border-color: var(--forest); background: #f4f7f1; }
+
+    footer { padding: 15px 0 20px; border-top: 1px solid var(--line); color: #7c8981; font: 9px var(--mono); }
+    .footer-inner { display: flex; justify-content: space-between; gap: 12px; }
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @media (max-width: 850px) {
+      .shell { width: min(100% - 36px, 700px); }
+      .heading-row { align-items: start; flex-direction: column; gap: 12px; }
+      .masthead-copy { max-width: 560px; }
+      .dashboard { grid-template-columns: 1fr; }
+      .side-column { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+      .side-panel + .side-panel { margin-top: 0; }
+    }
+    @media (max-width: 560px) {
+      .shell { width: calc(100% - 28px); }
+      .topbar { height: 60px; }
+      .brand { font-size: 11px; }
+      .nav { gap: 12px; font-size: 9px; }
+      .nav a:first-child { display: none; }
+      .masthead { padding-top: 31px; }
+      h1 { font-size: 39px; }
+      .masthead-copy { font-size: 12px; }
+      .metric-grid { grid-template-columns: 1fr 1fr; }
+      .metric { min-height: 91px; padding: 14px; border-bottom: 1px solid var(--line); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(3), .metric:nth-child(4) { border-bottom: 0; }
+      .metric-value { font-size: 25px; }
+      .dashboard { padding-top: 14px; }
+      .panel-head { padding: 16px; }
+      .lookup-form { padding: 15px 16px 11px; }
+      .privacy-note { padding: 0 16px 14px; }
+      .result-view { margin: 0 16px 16px; }
+      .file-row { grid-template-columns: 1fr; }
+      .side-column { grid-template-columns: 1fr; }
+      .entity-line { grid-template-columns: 65px minmax(0,1fr) auto; gap: 8px; padding: 12px 10px; }
+      .footer-inner { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">ER</span><span>ENTITY RESOLUTION <span style="color:#91a097">/</span> RESULTS</span></a>
+      <nav class="nav" aria-label="Main navigation"><a href="#overview">Overview</a><a href="#lookup">Lookup</a><a href="#method">Method</a><span class="top-status">TEST RUN</span></nav>
+    </div>
+  </header>
+
+  <main class="shell" id="top">
+    <section class="masthead" id="overview" aria-labelledby="page-title">
+      <p class="eyebrow">Business identity matching · full test set</p>
+      <div class="heading-row">
+        <h1 id="page-title">Match results</h1>
+        <p class="masthead-copy">Search a business name or address to find the location recorded in the reference data, then review the matching workflow and results.</p>
+      </div>
+    </section>
+
+    <section class="metric-grid" aria-label="Run summary">
+      <div class="metric"><span class="metric-value">1.73M</span><span class="metric-label">Reference records</span><span class="metric-detail">All Source 1 test entities</span></div>
+      <div class="metric"><span class="metric-value">80.3%</span><span class="metric-label">With proposed matches</span><span class="metric-detail">1,391,816 reference rows</span></div>
+      <div class="metric"><span class="metric-value">3.96M</span><span class="metric-label">Selected links</span><span class="metric-detail">Across Source 2 and Source 3</span></div>
+      <div class="metric"><span class="metric-value">42.32M</span><span class="metric-label">Candidates considered</span><span class="metric-detail">Up to 25 per reference</span></div>
+    </section>
+
+    <div class="dashboard">
+      <section class="panel" id="lookup" aria-labelledby="lookup-title">
+        <div class="panel-head">
+          <div><p class="panel-kicker">Location search</p><h2 id="lookup-title">Find a business</h2><p class="panel-caption">Search by business name, city, or address text.</p></div>
+          <span class="dataset-pill">SOURCE 1 RECORDS</span>
+        </div>
+        <form class="lookup-form" id="lookup-form">
+          <label class="field-label" for="source-file">Optional local Source 1 TSV</label>
+          <div class="file-row"><input id="source-file" type="file" accept=".tsv,text/tab-separated-values,text/plain"><span class="dataset-pill" id="file-size">PUBLISHED DATA</span></div>
+          <label class="field-label" for="location-query" style="margin-top:15px">Business name or address</label>
+          <div class="search-row"><input id="location-query" type="text" value="Zephay Labs" placeholder="Try a business name or city" autocomplete="off" spellcheck="false" required><button class="button" id="search-button" type="submit">Find location</button></div>
+          <p class="status" id="lookup-status" role="status" aria-live="polite">A real example is shown below. Search uses the published Source 1 data or a local TSV.</p>
+        </form>
+        <p class="privacy-note">Addresses come from the challenge data; they are not geocoded or independently map-verified. The TSV is streamed in your browser, not uploaded.</p>
+        <div class="result-view" id="result-view" aria-live="polite">
+          <div class="result-view-head"><span class="result-id">S1-714132312</span><span class="result-country">UNITED STATES</span></div>
+          <div class="entity-line"><span class="entity-source">SOURCE 1</span><div class="entity-main"><div class="entity-name">Zephay Labs Inc</div><div class="entity-address">2621 Cotten Road, Tyler, TX</div></div><span class="match-mark">REFERENCE</span></div>
+          <div class="entity-line"><span class="entity-source">SOURCE 2</span><div class="entity-main"><div class="entity-name">Zephay Labs Central Inc</div><div class="entity-address">2622 COTTEN ROAD, TYLR, TX</div></div><span class="match-mark">PROPOSED</span></div>
+          <div class="entity-line"><span class="entity-source">SOURCE 3</span><div class="entity-main"><div class="entity-name">Inc. Zephay Labs</div><div class="entity-address">2621 Cotten Road, Tyler, Texas</div></div><span class="match-mark">PROPOSED</span></div>
+          <div class="more-results">FINAL OUTPUT IDS: S2-786029403, S3-625880872</div>
+        </div>
+      </section>
+
+      <aside class="side-column">
+        <section class="panel side-panel" aria-labelledby="coverage-title">
+          <p class="panel-kicker">Selected match coverage · by country</p><h2 id="coverage-title">Market coverage</h2>
+          <p class="chart-note">Share of Source 1 records with at least one proposed match. This is not an accuracy score.</p>
+          <div class="chart-legend" aria-label="Chart legend"><span class="legend-item"><span class="legend-swatch"></span>Has proposed match</span><span class="legend-item"><span class="legend-swatch empty"></span>No proposed match</span></div>
+          <div class="coverage-chart" role="img" aria-label="Proposed match coverage: France 71.2 percent, India 78.3 percent, United States 86.4 percent.">
+            <div class="chart-axis"><span>0%</span><span>50%</span><span>100%</span></div>
+            <div class="coverage-row"><div class="coverage-row-head"><span class="coverage-country">France</span><span class="coverage-percent">71.2%</span></div><div class="coverage-plot"><div class="coverage-fill france"></div></div><div class="coverage-count">184,817 of 259,452 reference records</div></div>
+            <div class="coverage-row"><div class="coverage-row-head"><span class="coverage-country">India</span><span class="coverage-percent">78.3%</span></div><div class="coverage-plot"><div class="coverage-fill india"></div></div><div class="coverage-count">634,233 of 809,986 reference records</div></div>
+            <div class="coverage-row"><div class="coverage-row-head"><span class="coverage-country">United States</span><span class="coverage-percent">86.4%</span></div><div class="coverage-plot"><div class="coverage-fill us"></div></div><div class="coverage-count">572,766 of 663,106 reference records</div></div>
+          </div>
+        </section>
+
+        <section class="panel side-panel" id="method" aria-labelledby="method-title">
+          <p class="panel-kicker">How matching works</p><h2 id="method-title">Three steps</h2>
+          <div class="workflow">
+            <div class="workflow-step"><span class="step-no">01</span><div><div class="step-title">Normalize</div><div class="step-copy">Standardize names and addresses across spelling and punctuation variations.</div></div></div>
+            <div class="workflow-step"><span class="step-no">02</span><div><div class="step-title">Find candidates</div><div class="step-copy">Use country-aware blocking to shortlist up to 25 records per reference.</div></div></div>
+            <div class="workflow-step"><span class="step-no">03</span><div><div class="step-title">Score and select</div><div class="step-copy">A LightGBM classifier scores text and address features; confidence thresholds select proposed matches.</div></div></div>
+          </div>
+          <div class="downloads"><a class="download-link" href="./output/matching_results.tsv" download>Download matches</a></div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer><div class="shell footer-inner"><span>BUSINESS ENTITY RESOLUTION · ML CHALLENGE 2026</span><span>Match counts describe predictions, not measured accuracy.</span></div></footer>
+
+  <script>
+    const form = document.querySelector('#lookup-form');
+    const fileInput = document.querySelector('#source-file');
+    const queryInput = document.querySelector('#location-query');
+    const button = document.querySelector('#search-button');
+    const status = document.querySelector('#lookup-status');
+    const resultView = document.querySelector('#result-view');
+    const fileSize = document.querySelector('#file-size');
+    const sampleHtml = resultView.innerHTML;
+
+    function setStatus(message, kind = '') {
+      status.textContent = message;
+      status.dataset.kind = kind;
+    }
+
+    function escapeText(value) {
+      return value.replace(/[&<>"']/g, character => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
+    }
+
+    function normalizeSearchText(value) {
+      return value.normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLocaleLowerCase()
+        .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    async function findLocations(file, query) {
+      const stream = typeof file.stream === 'function' ? file.stream() : file.body;
+      if (!stream) throw new Error('The Source 1 data file could not be streamed.');
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let headerChecked = false;
+      let bytesRead = 0;
+      let nextUpdate = 0;
+      let columns;
+      let resultCount = 0;
+      const results = [];
+      const normalizedQuery = normalizeSearchText(query);
+      const legalSuffixes = new Set(['inc', 'incorporated', 'ltd', 'limited', 'llc', 'llp', 'corp', 'corporation', 'company', 'co']);
+      const canonicalQuery = normalizedQuery.split(' ').filter(token => !legalSuffixes.has(token)).join(' ');
+
+      function readLine(line) {
+        if (!headerChecked) {
+          columns = line.replace(/^\uFEFF/, '').split('\t');
+          if (!columns.includes('business_name') || !columns.includes('business_address') || !columns.includes('entity_id')) {
+            throw new Error('Choose a Source 1 TSV with entity_id, business_name, and business_address columns.');
+          }
+          headerChecked = true;
+          return;
+        }
+        const values = line.split('\t');
+        const name = values[columns.indexOf('business_name')] || '';
+        const address = values[columns.indexOf('business_address')] || '';
+        const countryIndex = columns.indexOf('country');
+        const normalizedName = normalizeSearchText(name);
+        const nameMatch = normalizedName.includes(normalizedQuery);
+        const addressMatch = normalizeSearchText(address).includes(normalizedQuery);
+        if (!nameMatch && !addressMatch) return false;
+        resultCount += 1;
+        if (results.length < 8) {
+          results.push({ id: values[columns.indexOf('entity_id')] || '', name, address, country: countryIndex >= 0 ? values[countryIndex] || '' : '' });
+        }
+        const canonicalName = normalizedName.split(' ').filter(token => !legalSuffixes.has(token)).join(' ');
+        return canonicalName === canonicalQuery || results.length >= 8;
+      }
+
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          bytesRead += value.byteLength;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split(/\r?\n/);
+          buffer = lines.pop() || '';
+
+          let stopSearch = false;
+          for (const line of lines) {
+            if (readLine(line)) {
+              stopSearch = true;
+              break;
+            }
+          }
+          if (stopSearch) {
+            await reader.cancel();
+            return { results, resultCount, bytesRead, complete: false };
+          }
+          if (bytesRead >= nextUpdate) {
+            const progress = file.size ? `${Math.min(99, Math.floor(bytesRead / file.size * 100))}%` : `${(bytesRead / (1024 * 1024)).toFixed(1)} MB`;
+            setStatus(`Searching Source 1 records… ${progress} scanned.`);
+            nextUpdate = bytesRead + 8 * 1024 * 1024;
+          }
+        }
+        buffer += decoder.decode();
+        if (buffer) readLine(buffer);
+        return { results, resultCount, bytesRead, complete: true };
+      } finally {
+        reader.releaseLock();
+      }
+    }
+
+    function showLocationResults(query, searchResults, resultCount, complete) {
+      const rows = searchResults.map(record => `<div class="entity-line"><span class="entity-source">${escapeText(record.id)}</span><div class="entity-main"><div class="entity-name">${escapeText(record.name)}</div><div class="entity-address">${escapeText(record.address || 'No address recorded')}</div></div><span class="result-country">${escapeText(record.country || 'UNKNOWN')}</span></div>`).join('');
+      const title = complete ? `${resultCount.toLocaleString()} result${resultCount === 1 ? '' : 's'} for “${escapeText(query)}”` : `Matches for “${escapeText(query)}”`;
+      const overflow = !complete ? `<div class="more-results">Showing the first ${searchResults.length} useful match${searchResults.length === 1 ? '' : 'es'} to keep search quick.</div>` : resultCount > searchResults.length ? `<div class="more-results">Showing the first ${searchResults.length} of ${resultCount.toLocaleString()} matches.</div>` : '';
+      resultView.innerHTML = `<div class="result-view-head"><span class="result-id">${title}</span><span class="dataset-pill">SOURCE 1</span></div>${rows || '<div class="entity-line"><div class="entity-main"><div class="entity-name">No matching location found</div><div class="entity-address">Try a shorter business name, street, or city.</div></div></div>'}${overflow}<div class="more-results">ADDRESS AS PROVIDED IN THE CHALLENGE DATA · NOT MAP-VERIFIED</div>`;
+    }
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files[0];
+      fileSize.textContent = file ? `${(file.size / (1024 * 1024)).toFixed(1)} MB READY` : 'PUBLISHED DATA';
+      resultView.innerHTML = sampleHtml;
+      setStatus(file ? 'Local Source 1 file selected. Enter a business name or address and search.' : 'A real example is shown below. Published Source 1 data will be used for searches.');
+    });
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      let file = fileInput.files[0];
+      const query = queryInput.value.trim();
+      if (normalizeSearchText(query).length < 2) {
+        setStatus('Enter at least two characters to search.', 'error');
+        queryInput.focus();
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = 'Searching…';
+      try {
+        if (!file) {
+          setStatus('Loading the published Source 1 data…');
+          const response = await fetch('./dataset/test/test_source1.tsv');
+          if (!response.ok) throw new Error('Published Source 1 data unavailable. Choose the test_source1.tsv file.');
+          file = { body: response.body, size: Number(response.headers.get('content-length')) || 0 };
+        }
+        const result = await findLocations(file, query);
+        showLocationResults(query, result.results, result.resultCount, result.complete);
+        if (result.resultCount) {
+          const noun = result.results.length === 1 ? 'record' : 'records';
+          const message = result.complete
+            ? `Found ${result.resultCount.toLocaleString()} matching Source 1 ${noun}.`
+            : `Showing the first ${result.results.length} matching Source 1 ${noun}.`;
+          setStatus(message, 'success');
+        } else {
+          setStatus('No matching Source 1 record found. Try another name, street, or city.', 'error');
+        }
+      } catch (error) {
+        setStatus(error instanceof Error ? error.message : 'Could not read that file.', 'error');
+      } finally {
+        button.disabled = false;
+        button.textContent = 'Find location';
+      }
+    });
+  </script>
+</body>
+</html>
